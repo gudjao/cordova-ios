@@ -128,7 +128,10 @@
             WKWebView* v = [[WKWebView alloc] initWithFrame:webView.frame configuration:configuration];
             v.UIDelegate = webView.UIDelegate;
             v.navigationDelegate = webView.navigationDelegate;
-
+            if (@available(iOS 16.4, *)) {
+                v.inspectable = YES;
+            }
+            
             UIViewController* vc = [[UIViewController alloc] init];
             vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
             vc.view = v;
