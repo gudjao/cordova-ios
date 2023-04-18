@@ -128,10 +128,23 @@
             WKWebView* v = [[WKWebView alloc] initWithFrame:webView.frame configuration:configuration];
             v.UIDelegate = webView.UIDelegate;
             v.navigationDelegate = webView.navigationDelegate;
+            // if (@available(iOS 16.4, *)) {
+            //     v.inspectable = YES;
+            // }
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
+            // With the introduction of iOS 16.4 the webview is no longer inspectable by default.
+            // We'll honor that change for release builds, but will still allow inspection on debug builds by default.
+            // We also introduce an override option, so consumers can influence this decision in their own build.
             if (@available(iOS 16.4, *)) {
-                v.inspectable = YES;
+        #ifdef DEBUG
+                BOOL allowWebviewInspectionDefault = YES;
+        #else
+                BOOL allowWebviewInspectionDefault = NO;
+        #endif
+                v.inspectable = allowWebviewInspectionDefault;
             }
-            
+        #endif
+
             UIViewController* vc = [[UIViewController alloc] init];
             vc.modalPresentationStyle = UIModalPresentationOverCurrentContext;
             vc.view = v;
